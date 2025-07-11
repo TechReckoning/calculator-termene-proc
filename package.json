@@ -2,7 +2,7 @@
   "name": "calculator-termene",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://TechReckoning.github.io/termene-proc",
+  "homepage": "https://TechReckoning.github.io/calculator-termene-proc",
   "dependencies": {
     "clsx": "^2.1.1",
     "date-fns": "^2.29.3",
