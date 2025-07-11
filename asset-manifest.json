@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/calculator-termene-proc/static/css/main.2e8e48e6.css",
+    "main.js": "/calculator-termene-proc/static/js/main.063217b4.js",
+    "static/js/488.2d139436.chunk.js": "/calculator-termene-proc/static/js/488.2d139436.chunk.js",
+    "service-worker.js": "/calculator-termene-proc/service-worker.js",
+    "index.html": "/calculator-termene-proc/index.html",
+    "main.2e8e48e6.css.map": "/calculator-termene-proc/static/css/main.2e8e48e6.css.map",
+    "main.063217b4.js.map": "/calculator-termene-proc/static/js/main.063217b4.js.map",
+    "488.2d139436.chunk.js.map": "/calculator-termene-proc/static/js/488.2d139436.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2e8e48e6.css",
+    "static/js/main.063217b4.js"
+  ]
+}
