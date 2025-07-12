@@ -23,6 +23,7 @@ function App() {
 
   function handleCalculate() {
     if (!isFormValid) return;
+    
     let resultDate = null;
     let logic = '';
     const n = Number(duration);
@@ -30,14 +31,10 @@ function App() {
     if (unit === 'zile') {
       // Sistemul zilelor libere (Cod procedură civilă)
       if (system === 'zile_libere') {
-        // 1. Ziua de început nu se ia în calcul
-        // 2. Se numără n zile calendaristice de la ziua următoare
-        // 3. Termenul se împlinește în ziua următoare celor n zile calendaristice
-        // 4. Dacă această zi e nelucrătoare, se prelungește la prima zi lucrătoare
         let d = new Date(startDate);
         d.setDate(d.getDate() + 1); // ziua de început nu se ia în calcul
         d.setDate(d.getDate() + n); // adaug n zile calendaristice
-        // ziua următoare celor n zile calendaristice este termenul
+        
         // dacă nu e lucrătoare, mergem la prima zi lucrătoare
         while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
           d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -47,14 +44,11 @@ function App() {
       }
       // Sistemul intermediar (Legea 101/2016)
       else if (system === 'intermediar') {
-        // 1. Ziua comunicării nu se ia în calcul
-        // 2. Termenul începe de la ora 0:00 a primei zile
-        // 3. Dacă ultima zi pică într-o zi nelucrătoare, termenul se prelungește până la ultima oră a următoarei zile lucrătoare
         let d = new Date(startDate);
         d.setDate(d.getDate() + 1); // ziua comunicării nu se ia în calcul
-        // numărăm n zile calendaristice
-        d.setDate(d.getDate() + n);
+        d.setDate(d.getDate() + n); // numărăm n zile calendaristice
         d.setDate(d.getDate() - 1); // ne întoarcem pe ultima zi
+        
         // dacă nu e lucrătoare, mergem la prima zi lucrătoare
         while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
           d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -64,10 +58,9 @@ function App() {
       }
       // Sistemul zilelor pline (sistem brut)
       else if (system === 'zile_pline') {
-        // 1. Se iau în calcul ziua comunicării și ziua de sfârșit
-        // 2. Dacă ultima zi e nelucrătoare, termenul se prelungește la următoarea zi lucrătoare
         let d = new Date(startDate);
         d.setDate(d.getDate() + n - 1);
+        
         // dacă nu e lucrătoare, mergem la prima zi lucrătoare
         while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
           d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -77,12 +70,11 @@ function App() {
       }
     }
     else if (unit === 'ore') {
-      // 1. Încep de la ora 00:00 a zilei următoare
-      // 2. Dacă termenul se împlinește în zi nelucrătoare, se prelungește până în prima zi lucrătoare
       let d = new Date(startDate);
       d.setDate(d.getDate() + 1); // începe de la 00:00 a zilei următoare
       d.setHours(0, 0, 0, 0);
       d = new Date(d.getTime() + n * 60 * 60 * 1000); // adaug n ore
+      
       // dacă se termină într-o zi nelucrătoare, mergem la prima zi lucrătoare
       while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
         d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -92,11 +84,9 @@ function App() {
       logic = `Termenul de ${n} ore începe la ora 00:00 a zilei următoare (${formatDateRO(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 1))}) și expiră la ora 0:00 în data de ${formatDateRO(resultDate)} (${getWeekdayRO(resultDate)}), prelungit dacă expiră într-o zi nelucrătoare.`;
     }
     else if (unit === 'săptămâni') {
-      // 1. Se încheie în ziua corespunzătoare din ultima săptămână
-      // 2. Dacă ultima zi e nelucrătoare → se prelungește la prima zi lucrătoare
-      // 3. Se consideră împlinit la ora 24:00 a ultimei zile
       let d = new Date(startDate);
       d.setDate(d.getDate() + n * 7);
+      
       // dacă nu e lucrătoare, mergem la prima zi lucrătoare
       while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
         d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -105,19 +95,17 @@ function App() {
       logic = `Termenul de ${n} săptămână${n > 1 ? 'i' : 'ă'} se încheie în ziua corespunzătoare, iar dacă expiră într-o zi nelucrătoare se prelungește la prima zi lucrătoare. Termenul expiră la ora 24:00 în data de ${formatDateRO(resultDate)} (${getWeekdayRO(resultDate)}).`;
     }
     else if (unit === 'luni') {
-      // 1. Se încheie în ziua corespunzătoare din ultima lună
-      // 2. Dacă luna nu are zi corespunzătoare → se încheie în ultima zi a lunii
-      // 3. Dacă ultima zi e nelucrătoare → se prelungește la prima zi lucrătoare
-      // 4. Se consideră împlinit la ora 24:00 a ultimei zile
       let d = new Date(startDate);
       let zi = d.getDate();
       d.setMonth(d.getMonth() + n);
+      
       // dacă luna nu are ziua respectivă, se ia ultima zi a lunii
       if (d.getDate() < zi) {
         d.setDate(0); // ultima zi a lunii anterioare
       } else {
         d.setDate(zi);
       }
+      
       // dacă nu e lucrătoare, mergem la prima zi lucrătoare
       while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
         d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -126,20 +114,18 @@ function App() {
       logic = `Termenul de ${n} lun${n > 1 ? 'i' : 'ă'} se încheie în ziua corespunzătoare, iar dacă luna nu are ziua respectivă se ia ultima zi a lunii. Dacă expiră într-o zi nelucrătoare, se prelungește la prima zi lucrătoare. Termenul expiră la ora 24:00 în data de ${formatDateRO(resultDate)} (${getWeekdayRO(resultDate)}).`;
     }
     else if (unit === 'ani') {
-      // 1. Se încheie în ziua corespunzătoare din ultimul an
-      // 2. Dacă nu există ziua respectivă (ex: 29 feb), se ia ultima zi a lunii
-      // 3. Dacă ultima zi e nelucrătoare → se prelungește la prima zi lucrătoare
-      // 4. Se consideră împlinit la ora 24:00 a ultimei zile
       let d = new Date(startDate);
       let zi = d.getDate();
       let luna = d.getMonth();
       d.setFullYear(d.getFullYear() + n);
+      
       // dacă luna nu are ziua respectivă, se ia ultima zi a lunii
       if (d.getMonth() !== luna) {
         d.setDate(0); // ultima zi a lunii anterioare
       } else {
         d.setDate(zi);
       }
+      
       // dacă nu e lucrătoare, mergem la prima zi lucrătoare
       while (!isWorkingDay(d, getLegalHolidays(d.getFullYear()))) {
         d = nextWorkingDay(d, getLegalHolidays(d.getFullYear()));
@@ -147,6 +133,7 @@ function App() {
       resultDate = d;
       logic = `Termenul de ${n} an${n > 1 ? 'i' : ''} se încheie în ziua corespunzătoare, iar dacă nu există ziua respectivă se ia ultima zi a lunii. Dacă expiră într-o zi nelucrătoare, se prelungește la prima zi lucrătoare. Termenul expiră la ora 24:00 în data de ${formatDateRO(resultDate)} (${getWeekdayRO(resultDate)}).`;
     }
+    
     setResult(resultDate ? formatDateRO(resultDate) : '');
     setExplanation(logic);
     setCalculated(true);

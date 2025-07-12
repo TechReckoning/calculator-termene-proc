@@ -1,5 +1,4 @@
-// holidays.js
-// Returnează array cu datele sărbătorilor legale pentru un an dat (format YYYY-MM-DD)
+// holidays.js - Sărbători legale România 2024-2030
 
 function formatDate(date) {
   return date.toISOString().slice(0, 10);
@@ -23,8 +22,8 @@ function getFixedHolidays(year) {
   ];
 }
 
-// Sărbători specifice pentru anii 2024-2030
-function getSpecificHolidays(year) {
+// Sărbători mobile pentru anii 2024-2030
+function getMobileHolidays(year) {
   const holidays = [];
   
   switch (year) {
@@ -76,19 +75,24 @@ function getSpecificHolidays(year) {
       // Rusalii: 16-17 iunie
       holidays.push('2030-06-16', '2030-06-17');
       break;
+      
+    default:
+      // Pentru anii în afara intervalului 2024-2030, returnează doar sărbătorile fixe
+      break;
   }
   
   return holidays;
 }
 
+// Funcția principală - returnează toate sărbătorile pentru un an
 export function getLegalHolidays(year) {
   const fixedHolidays = getFixedHolidays(year);
-  const specificHolidays = getSpecificHolidays(year);
+  const mobileHolidays = getMobileHolidays(year);
   
-  return [...fixedHolidays, ...specificHolidays];
+  return [...fixedHolidays, ...mobileHolidays];
 }
 
-// Funcție pentru a verifica dacă o dată este sărbătoare legală
+// Verifică dacă o dată este sărbătoare legală
 export function isLegalHoliday(date) {
   const year = date.getFullYear();
   const holidays = getLegalHolidays(year);
